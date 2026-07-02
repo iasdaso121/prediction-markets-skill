@@ -1,0 +1,122 @@
+{
+  "skill_name": "prediction-markets",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "What probability does Kalshi currently assign to tomorrow's NYC high temperature exceeding 99°F? Name the exact market you used.",
+      "expected_output": "A percentage sourced from a live KXHIGHNY market via kalshi_markets.py, with the market ticker named.",
+      "files": [],
+      "assertions": [
+        "Ran kalshi_markets.py (not hand-written API calls or memorized endpoints)",
+        "Quoted probability is consistent with the script's implied_probability output (0-1 float rendered as %)",
+        "Names a concrete market ticker from the KXHIGHNY series",
+        "Does not confuse dollar-string prices with percent (e.g. '0.31' reported as 31%, not 0.31%)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "How liquid is the most active Kalshi market about the December Fed decision? I want spread and depth, and your judgment of whether the midpoint probability is trustworthy.",
+      "expected_output": "Orderbook summary (best bid/ask, spread, depth) from kalshi_orderbook.py plus an interpretation tied to the numbers.",
+      "files": [],
+      "assertions": [
+        "Discovered the market via kalshi_markets.py, then ran kalshi_orderbook.py on it",
+        "Reports spread and depth figures matching the script's summary object",
+        "Interpretation references spread/depth (not generic 'it depends')",
+        "No trading suggestions or order placement"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Get me the current best bid, best ask and midpoint for the Polymarket market on Mexico winning the 2026 World Cup. I have no token id, just this description.",
+      "expected_output": "Slug/market resolved via poly_markets.py or --slug, then poly_orderbook.py summary quoted.",
+      "files": [],
+      "assertions": [
+        "Resolved the market without asking the user for a token id",
+        "Used poly_orderbook.py (values match its summary fields)",
+        "Prices reported as 0-1 decimals or % consistently, never cents",
+        "Handled the clobTokenIds string-array correctly (no '[' indexing bug symptoms)"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Give me a month of daily price history for the Polymarket government shutdown market as JSON I can plot: unix seconds + probability per point.",
+      "expected_output": "poly_history.py output (points with t/iso/p), possibly trimmed, presented as plot-ready JSON.",
+      "files": [],
+      "assertions": [
+        "Ran poly_history.py with a sensible interval/fidelity or start/end range",
+        "Points carry unix SECONDS (not milliseconds) and 0-1 float probabilities",
+        "Did not invent an 'ohlc' or 'orderbook-history' endpoint",
+        "JSON in the answer parses"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Is the same Fed-December event priced differently on Kalshi vs Polymarket right now? Show me candidate market pairs and the probability gap, and be honest about match quality.",
+      "expected_output": "match_markets.py pairs with confidence components and prob_spread, plus manual verification caveats.",
+      "files": [],
+      "assertions": [
+        "Ran match_markets.py --query (not two manual searches glued together)",
+        "Reports confidence and prob_spread from the script's output",
+        "States the v0/heuristic caveat and that prob_spread ignores fees/slippage",
+        "Does not claim 'arbitrage' for pairs with confidence < 0.7 without a manual title check"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Fetch the Kalshi orderbook for ticker KXFAKEMARKET-99ZZZ-T1 and tell me the spread.",
+      "expected_output": "Graceful not-found handling: script exits 6, answer says the market doesn't exist, suggests discovery.",
+      "files": [],
+      "assertions": [
+        "Ran kalshi_orderbook.py and correctly interpreted the not-found error (exit 6)",
+        "Did NOT fabricate a spread or an empty-book explanation for a nonexistent ticker",
+        "Suggested how to find real tickers (kalshi_markets.py discovery)"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "I'm on a network where Kalshi might be blocked. Check whether I can reach Kalshi's public API right now, and if not, tell me clearly what's wrong.",
+      "expected_output": "A script run whose geo/network classification (exit 5 vs 3 vs 0) is relayed accurately.",
+      "files": [],
+      "assertions": [
+        "Ran one of the kalshi_*.py scripts and read the error category from stderr JSON",
+        "If geo-blocked: says so explicitly (region/VPN hint), does not misreport as a Kalshi outage",
+        "If reachable: confirms with a real market data point"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Find every open Kalshi market mentioning 'CPI' and list ticker, title and implied probability. Tell me if your search was exhaustive.",
+      "expected_output": "kalshi_markets.py --query results plus honest reporting of the scan object / truncation.",
+      "files": [],
+      "assertions": [
+        "Ran kalshi_markets.py with --query (client-side search) and appropriate filters",
+        "Relays the scan object honestly: says whether the scan was complete or capped at --max-pages",
+        "Does not present a truncated scan as the complete universe"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "What does a YES price of 34 cents on a Kalshi market actually mean, and what do I get if I'm right? Then check what the equivalent 'price' representation is on Polymarket for a market trading at the same probability.",
+      "expected_output": "Mechanics explanation grounded in references/market-mechanics.md: implied probability, $1/$0 settlement, dollar-strings vs 0-1 decimals.",
+      "files": [],
+      "assertions": [
+        "Explains price = implied probability and binary settlement at $1/$0",
+        "Notes Kalshi's current API quotes fixed-point dollar STRINGS (cents-era fields removed), Polymarket 0-1 decimals",
+        "Does not recite a Kalshi fee formula from memory (docs don't publish one in the API)",
+        "Consulted references (mechanics/gotchas) rather than answering purely from priors"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "Write me a cron-able one-liner or tiny script that alerts when the Polymarket midpoint for a given token id crosses 0.5. Use whatever this repo provides.",
+      "expected_output": "A wrapper around poly_orderbook.py (or its midpoint fetch) honoring the JSON envelope and exit codes; no new API code from memory.",
+      "files": [],
+      "assertions": [
+        "Reuses the skill's scripts instead of writing fresh urllib calls to memorized endpoints",
+        "Parses the JSON envelope (midpoint from summary) rather than scraping stdout text",
+        "Handles the nonzero-exit error path (network/geo/not-found) instead of assuming success",
+        "Read-only: no order placement, no keys"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+[
+  {"query": "whats the current probability on kalshi that the fed cuts rates at the september meeting? also tell me how liquid that market is, i don't want a number backed by a $50 orderbook", "should_trigger": true},
+  {"query": "Compare the 2028 presidential election winner prices on Kalshi vs Polymarket and tell me if there's a meaningful gap between the two venues right now.", "should_trigger": true},
+  {"query": "I need a plot-ready JSON time series of the government shutdown market probability on polymarket over the last month. timestamps in unix seconds please", "should_trigger": true},
+  {"query": "my friend claims polymarket has the ukraine ceasefire market at like 70%. can you verify the actual current price and check the orderbook depth behind it", "should_trigger": true},
+  {"query": "pull the implied probability that tomorrow's NYC high temperature goes above 99 degrees from kalshi's weather markets", "should_trigger": true},
+  {"query": "I have a polymarket market slug (will-mexico-win-the-2026-fifa-world-cup-529 or smth like that) — how do i get its live orderbook programmatically? need best bid/ask and spread in a script", "should_trigger": true},
+  {"query": "building a dashboard widget: need betting odds style event contract prices for the december fed decision as json. some api that doesn't need keys ideally", "should_trigger": true},
+  {"query": "find all open kalshi markets about CPI inflation and give me their yes prices converted to probabilities, sorted by volume", "should_trigger": true},
+  {"query": "is there an arbitrage opportunity between kalshi and polymarket on the world cup winner markets right now? show me matched pairs with the price differences", "should_trigger": true},
+  {"query": "write me a small python script that fetches the midpoint price for a polymarket CLOB token id and prints it as a percentage. no external deps, I'll cron it", "should_trigger": true},
+  {"query": "help me place a bet on polymarket — I want to buy 100 shares of YES on the fed december market from a script", "should_trigger": false},
+  {"query": "what's the weather forecast for NYC tomorrow? planning a bike ride, need the high temp", "should_trigger": false},
+  {"query": "build me a scraper that pulls sports betting odds from draftkings and fanduel and finds the best moneyline", "should_trigger": false},
+  {"query": "write a literature-review style explainer on how prediction markets aggregate dispersed information — hayek, wisdom of crowds, that angle. no live data needed, it's for a blog post", "should_trigger": false},
+  {"query": "backtest a mean-reversion trading strategy on S&P 500 daily data from yahoo finance for me", "should_trigger": false},
+  {"query": "what did the latest polls say about the senate race in ohio? aggregate a few pollsters if you can", "should_trigger": false},
+  {"query": "integrate the kraken api into my bot to fetch crypto orderbooks and stream trades", "should_trigger": false},
+  {"query": "my py-clob-client keeps throwing L2 auth errors when i try to post an order on polymarket, here's the traceback — debug it", "should_trigger": false},
+  {"query": "make me a chart of bitcoin's price history over the last year with volume bars", "should_trigger": false},
+  {"query": "translate this news article about kalshi's CFTC lawsuit into spanish, keep the legal terms precise", "should_trigger": false}
+]

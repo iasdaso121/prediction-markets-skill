@@ -1,0 +1,13 @@
+{
+  "name": "prediction-markets-skill",
+  "owner": {
+    "name": "Gregory"
+  },
+  "plugins": [
+    {
+      "name": "prediction-markets",
+      "source": "./",
+      "description": "Read-only market data for Kalshi and Polymarket prediction markets: market discovery, orderbooks, price history, implied probability, cross-venue matching. Zero dependencies, no API keys."
+    }
+  ]
+}

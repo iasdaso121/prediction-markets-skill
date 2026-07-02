@@ -1,0 +1,13 @@
+# Raw documentation dumps — regenerated from live docs, not shipped
+docs-raw/
+
+# Local workspaces and private working docs
+*-workspace/
+generated-images/
+PLAN.md
+
+# OS / editor noise
+.DS_Store
+__pycache__/
+*.pyc
+.venv/
