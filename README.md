@@ -27,14 +27,14 @@ v0.1.0 — Active development. See CHANGELOG.md.
 
 ### 1. Claude Code (plugin, preferred)
 ```bash
-claude plugin marketplace add iasdaso121/prediction-markets-skill
+claude plugin marketplace add azazelitto21/prediction-markets-skill
 claude plugin install prediction-markets
 ```
-*(Or use `/plugin marketplace add iasdaso121/prediction-markets-skill` interactively)*
+*(Or use `/plugin marketplace add azazelitto21/prediction-markets-skill` interactively)*
 
 ### 2. Any SKILL.md-compatible agent
 ```bash
-git clone --depth 1 https://github.com/iasdaso121/prediction-markets-skill /tmp/pms
+git clone --depth 1 https://github.com/azazelitto21/prediction-markets-skill /tmp/pms
 mkdir -p ~/.claude/skills
 cp -r /tmp/pms/skills/prediction-markets ~/.claude/skills/
 rm -rf /tmp/pms
@@ -42,7 +42,7 @@ rm -rf /tmp/pms
 
 ### 3. skills CLI
 ```bash
-npx skills add iasdaso121/prediction-markets-skill
+npx skills add azazelitto21/prediction-markets-skill
 ```
 
 ## Mini-example
