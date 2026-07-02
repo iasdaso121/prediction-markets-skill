@@ -1,5 +1,12 @@
 # prediction-markets-skill
 
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)
+![Dependencies](https://img.shields.io/badge/dependencies-stdlib--only-success.svg)
+![Zero Deps](https://img.shields.io/badge/zero--deps-true-success.svg)
+![Scope](https://img.shields.io/badge/scope-read--only-green.svg)
+![Trigger Accuracy](https://img.shields.io/badge/trigger_accuracy-50%25-orange.svg)
+
 **Scope: read-only market data only. No trading, no API keys, no wallet access — ever, in this skill.**
 
 A zero-dependency skill for Claude Code / Codex / Cursor that gives AI agents accurate, non-hallucinated access to [Kalshi](https://kalshi.com) and [Polymarket](https://polymarket.com) public market data: market discovery, orderbooks, price history, implied probability, and cross-venue market matching.
@@ -14,11 +21,52 @@ A zero-dependency skill for Claude Code / Codex / Cursor that gives AI agents ac
 
 ## Status
 
-v0 scaffold — under active development. See CHANGELOG.md.
+v0.1.0 — Active development. See CHANGELOG.md.
 
 ## Install
 
-_Install one-liners land in Phase 2 (Claude Code plugin, `npx skills add`, curl into `~/.claude/skills/`)._
+### 1. Claude Code (plugin, preferred)
+```bash
+claude plugin marketplace add iasdaso121/prediction-markets-skill
+claude plugin install prediction-markets
+```
+*(Or use `/plugin marketplace add iasdaso121/prediction-markets-skill` interactively)*
+
+### 2. Any SKILL.md-compatible agent
+```bash
+git clone --depth 1 https://github.com/iasdaso121/prediction-markets-skill /tmp/pms
+mkdir -p ~/.claude/skills
+cp -r /tmp/pms/skills/prediction-markets ~/.claude/skills/
+rm -rf /tmp/pms
+```
+
+### 3. skills CLI
+```bash
+npx skills add iasdaso121/prediction-markets-skill
+```
+
+## Mini-example
+
+```bash
+python3 scripts/poly_markets.py --active --limit 1
+```
+
+```json
+{
+  "venue": "Polymarket",
+  "endpoint": "https://gamma-api.polymarket.com/events",
+  "params": "active=true&limit=1",
+  "fetched_at": "2026-07-02T12:00:00Z",
+  "count": 1,
+  "data": [
+    {
+      "title": "Will interest rates be cut in September?",
+      "slug": "fed-rate-cut-september",
+      "active": true
+    }
+  ]
+}
+```
 
 ## Disclaimer
 
