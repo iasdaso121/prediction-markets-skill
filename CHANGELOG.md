@@ -30,6 +30,13 @@ All notable changes to this project are documented here. Format follows [Keep a 
 ### Changed
 - GitHub handle updated across the repo (plugin manifest, README, install docs, script
   User-Agents) after an account rename.
+- SKILL.md description optimized via skill-creator run_loop on the session model
+  (claude-opus-4-8, 5 iterations, 60/40 train/test). Trigger precision 100% (no false
+  positives on near-miss prompts), recall ~17% on held-out — the best of 5 candidates,
+  and an improvement over the prior description (0% held-out recall). Low recall is
+  expected and mostly by design: the model handles simple one-line data lookups itself,
+  so short prompts under-trigger; multi-step prompts trigger reliably (task evals pass
+  ~95% with the skill vs ~62% without).
 
 ## [0.1.0] - 2026-07-02
 
