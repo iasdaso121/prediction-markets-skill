@@ -47,10 +47,28 @@ Exit 0 with `count: 0` = valid empty result (e.g. no matches), not an error.
 ### "Compare venues / is there a price gap?"
 1. `match_markets.py --query "topic" --top 5`.
 2. Each pair reports `confidence` (0–1, components: title/date/entities) and `prob_spread`.
+   The matcher canonicalizes common aliases (Fed=FOMC, NYC=New York=KNYC, BTC=Bitcoin,
+   Cavs=Cleveland, $60k=60000) before scoring, but it is still a v0 heuristic.
 3. Treat `confidence < 0.7` pairs as suggestions — read both titles yourself and check the
    markets resolve on the SAME criterion and date before claiming a price gap.
 4. Raw `prob_spread` ignores fees and slippage — read `references/market-mechanics.md`
    (fees section) before calling anything an edge. This skill does not trade.
+
+### Weather / temperature markets (Kalshi)
+Kalshi weather markets live under series like `KXHIGH<CITY>` (e.g. `KXHIGHNY` = NYC daily
+high, `KXHIGHLAX`, `KXHIGHCHI`). There is no text search, and scanning all markets for
+"temperature" is slow — go through the series instead:
+1. `kalshi_markets.py --series KXHIGHNY --status open` → today's/tomorrow's temperature buckets.
+2. A day's high is split into mutually-exclusive buckets (e.g. `-B98.5`, `-B100.5`, `-T105`).
+   To answer "P(high > 99°)", `kalshi_markets.py --event KXHIGHNY-26JUL04` returns ALL buckets
+   of that event — sum the `implied_probability` of the buckets above the threshold.
+3. Don't pick one bucket and call it the answer; the buckets partition the outcome space.
+
+### Multi-contract events (sports, ranges) — use `--event`, not `--query`
+One game or event is many contracts (moneyline, spread, totals; or temperature buckets), each
+its own ticker. To get them all: find the `event_ticker` from any one market, then
+`kalshi_markets.py --event <EVENT_TICKER>` returns every market in that event. `--query` alone
+scans the whole universe slowly and may miss them — the event listing is exact and fast.
 
 ## References — read before deviating from the scripts
 

@@ -25,7 +25,7 @@ from datetime import datetime, timezone
 
 BASE = "https://external-api.kalshi.com/trade-api/v2"  # primary prod host, references/kalshi-api.md
 ALT_BASE = "https://api.elections.kalshi.com/trade-api/v2"  # secondary documented prod host, gotchas.md "Base URLs"
-USER_AGENT = "prediction-markets-skill/0.1 (+https://github.com/iasdaso121/prediction-markets-skill)"
+USER_AGENT = "prediction-markets-skill/0.1 (+https://github.com/azazelitto21/prediction-markets-skill)"
 PERIOD_CHOICES = (1, 60, 1440)  # minutes; validated enum per openapi.yaml
 EXIT_CODES = {"usage": 2, "network": 3, "rate-limit": 4, "geo": 5, "not-found": 6, "schema": 7}
 

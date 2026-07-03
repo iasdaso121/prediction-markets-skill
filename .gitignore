@@ -6,6 +6,10 @@ docs-raw/
 generated-images/
 PLAN.md
 
+# Local scratch
+run_all.sh
+run_all.out
+
 # OS / editor noise
 .DS_Store
 __pycache__/

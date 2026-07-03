@@ -38,6 +38,12 @@ WRONG: `/book?token_id=will-x-win-2028` (slug), passing a `0x…` condition_id a
 RIGHT: token_id (aka asset id) is a huge numeric string. Source it from Gamma market `clobTokenIds` — declared `type: string` (nullable) in the Gamma spec, i.e. a JSON-encoded array you must `json.loads` first; element [0] = Yes token, [1] = No token. Reverse lookup: `GET /markets-by-token/{token_id}`. condition_id is only for `GET /clob-markets/{condition_id}`. Slugs resolve only on Gamma (`/markets/slug/{slug}`, `/events/slug/{slug}`).
 GOTCHA: `clobTokenIds` prints like an array but is a string — indexing without parsing yields `"["`. `outcomePrices` has the same stringified-array trap.
 
+## clobTokenIds order is NOT guaranteed [Yes, No] — match by outcome LABEL
+WHEN: Picking the Yes (or No) token for CLOB `/book`, `/price`, `/midpoint` from a Gamma market.
+WRONG: `yes_token = clobTokenIds[0]` — assuming index 0 is always Yes.
+RIGHT: `clobTokenIds[i]` corresponds to `outcomes[i]`; parse BOTH stringified arrays, find the index where `outcomes[i].lower() == "yes"`, then take `clobTokenIds[i]`. Only fall back to index 0=Yes / 1=No when the market has no `outcomes` labels at all. (This is what `poly_orderbook.py` does.)
+GOTCHA: Most binary markets happen to store `[Yes, No]`, so position-based code works until it silently hits a market stored `[No, Yes]` and returns the opposite side's book — the root of py-clob-client issue #276. Positional indexing looks correct in testing and fails in production.
+
 ## negRisk events: visible YES prices are not the whole probability mass
 WHEN: Summing YES prices across a multi-outcome event or hunting "sum ≠ $1" arbs.
 WRONG: Assuming the listed markets are the complete outcome set and their YES prices must sum to ~1.00.

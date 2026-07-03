@@ -17,7 +17,7 @@ GAMMA_BASE = "https://gamma-api.polymarket.com"               # references/polym
 KALSHI_ALT_HOST = {"external-api.kalshi.com": "api.elections.kalshi.com"}
 _HOST_SWAP = {}  # dead host -> working alternate; filled in when a bare-403 fallback succeeds
 GEO_WORDS = re.compile(r"cloudflare|cloudfront|region|country|geo|block|restricted|not available", re.I)
-USER_AGENT = "prediction-markets-skill/0.1 (+https://github.com/iasdaso121/prediction-markets-skill)"
+USER_AGENT = "prediction-markets-skill/0.1 (+https://github.com/azazelitto21/prediction-markets-skill)"
 EXIT = {"usage": 2, "network": 3, "rate-limit": 4, "geo": 5, "not-found": 6, "schema": 7}
 KALSHI_PAGE_SIZE = 1000   # /markets limit max per spec
 SEARCH_MAX_PAGES = 5      # /public-search page cap (runtime budget)
@@ -31,6 +31,65 @@ MONTHS = frozenset(
     "january february march april may june july august september october november december "
     "jan feb mar apr jun jul aug sep sept oct nov dec".split()
 )
+
+# Alias canonicalization: the two venues name the same entity differently (Kalshi
+# "KXHIGHNY"/"New York" vs Polymarket "NYC"; "Cavaliers" vs "Cleveland"; "Fed" vs "FOMC").
+# Each group maps every variant to a single canonical token so title/entity overlap
+# survives naming differences. Compact, US-market-focused; extend as real misses surface.
+# This is a heuristic aid, NOT semantic understanding — confidence stays advisory.
+_ALIAS_GROUPS = [
+    # macro / rates
+    ("fed", ["fed", "fomc", "federalreserve", "fedreserve", "ratedecision", "interestrate", "rates", "fedfunds"]),
+    ("ratecut", ["ratecut", "cut", "cuts", "ratecuts"]),
+    ("ratehike", ["ratehike", "hike", "hikes"]),
+    ("cpi", ["cpi", "inflation", "consumerprice"]),
+    ("gdp", ["gdp", "grossdomestic"]),
+    ("recession", ["recession"]),
+    # weather cities (Kalshi weather series use airport/city names; Polymarket uses city)
+    ("nyc", ["nyc", "newyork", "york", "knyc", "laguardia", "klga", "manhattan"]),
+    ("la", ["la", "losangeles", "angeles", "klax"]),
+    ("chicago", ["chicago", "kord", "kmdw"]),
+    ("miami", ["miami", "kmia"]),
+    ("austin", ["austin", "kaus"]),
+    ("denver", ["denver", "kden"]),
+    # crypto
+    ("bitcoin", ["bitcoin", "btc"]),
+    ("ethereum", ["ethereum", "eth"]),
+    # politics (names commonly abbreviated across venues)
+    ("trump", ["trump", "donaldtrump"]),
+    ("biden", ["biden", "joebiden"]),
+    ("harris", ["harris", "kamala", "kamalaharris"]),
+    # sports leagues / common team<->city pairs (extend on demand)
+    ("worldcup", ["worldcup", "fifa", "fifaworldcup"]),
+    ("superbowl", ["superbowl", "sb"]),
+    ("cavaliers", ["cavaliers", "cavs", "cleveland"]),
+    ("celtics", ["celtics", "boston"]),
+    ("lakers", ["lakers"]),
+    ("warriors", ["warriors", "goldenstate"]),
+    ("chiefs", ["chiefs", "kansascity"]),
+    ("cowboys", ["cowboys", "dallas"]),
+]
+# variant token -> canonical token
+_ALIAS = {v: canon for canon, variants in _ALIAS_GROUPS for v in variants}
+
+# Threshold words that mean the same comparison, collapsed to one token so
+# "above 60000" and "over 60000" and ">60000" overlap.
+_THRESHOLD_WORDS = {"above": "gt", "over": "gt", "greater": "gt", "exceed": "gt", "exceeds": "gt",
+                    "more": "gt", "below": "lt", "under": "lt", "less": "lt", "fewer": "lt"}
+
+
+def _canon(tok):
+    """Map a token to its canonical alias if known, else itself."""
+    return _ALIAS.get(tok, _THRESHOLD_WORDS.get(tok, tok))
+
+
+def _expand_number(tok):
+    """Normalize magnitude suffixes so 60k -> 60000, 1.5m -> 1500000 (string form)."""
+    m = re.fullmatch(r"(\d+(?:\.\d+)?)([kmb])", tok)
+    if not m:
+        return tok
+    mult = {"k": 1_000, "m": 1_000_000, "b": 1_000_000_000}[m.group(2)]
+    return str(int(float(m.group(1)) * mult))
 
 
 def eprint(*args):
@@ -105,16 +164,25 @@ def http_get_json(url, timeout):
 
 def tokenize(text):
     raw = re.sub(r"[^a-z0-9 ]", " ", (text or "").lower()).split()
-    return {t for t in raw if t not in STOPWORDS and (len(t) > 1 or t.isdigit())}
+    toks = set()
+    for t in raw:
+        if t in STOPWORDS:
+            continue
+        if len(t) <= 1 and not t.isdigit():
+            continue
+        toks.add(_canon(_expand_number(t)))
+    return toks
 
 
 def extract_entities(text):
     text = text or ""
-    ents = set(re.findall(r"\d+(?:\.\d+)?", text))  # numbers incl. years
+    # numbers incl. years and magnitude-suffixed thresholds ($60k -> 60000)
+    ents = {_expand_number(n.lower()) for n in re.findall(r"\d+(?:\.\d+)?[kmb]?", text)}
     lowered = re.findall(r"[a-z]+", text.lower())
     ents |= {w for w in lowered if w in MONTHS}
+    ents |= {_canon(w) for w in lowered if w in _ALIAS}  # canonical alias tokens (fed, nyc, btc, ...)
     # capitalized proper nouns (stopword filter drops sentence-initial "Will" etc.)
-    ents |= {w.lower() for w in re.findall(r"\b[A-Z][A-Za-z]+\b", text) if w.lower() not in STOPWORDS}
+    ents |= {_canon(w.lower()) for w in re.findall(r"\b[A-Z][A-Za-z]+\b", text) if w.lower() not in STOPWORDS}
     return ents
 
 

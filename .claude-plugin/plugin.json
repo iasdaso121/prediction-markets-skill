@@ -1,12 +1,12 @@
 {
   "name": "prediction-markets",
   "description": "Read-only market data for Kalshi and Polymarket prediction markets: discover markets, fetch orderbooks and price history, compute implied probability, and match equivalent markets across venues. Zero dependencies (Python stdlib only), no API keys required.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": {
     "name": "Gregory"
   },
-  "homepage": "https://github.com/iasdaso121/prediction-markets-skill",
-  "repository": "https://github.com/iasdaso121/prediction-markets-skill",
+  "homepage": "https://github.com/azazelitto21/prediction-markets-skill",
+  "repository": "https://github.com/azazelitto21/prediction-markets-skill",
   "license": "MIT",
   "keywords": [
     "kalshi",

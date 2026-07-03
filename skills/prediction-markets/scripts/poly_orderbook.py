@@ -19,7 +19,7 @@ from datetime import datetime, timezone
 
 GAMMA = "https://gamma-api.polymarket.com"
 CLOB = "https://clob.polymarket.com"
-USER_AGENT = "prediction-markets-skill/0.1 (+https://github.com/iasdaso121/prediction-markets-skill)"
+USER_AGENT = "prediction-markets-skill/0.1 (+https://github.com/azazelitto21/prediction-markets-skill)"
 EXIT_CODES = {"usage": 2, "network": 3, "rate-limit": 4, "geo": 5, "not-found": 6, "schema": 7}
 GEO_WORDS = ("cloudflare", "region", "blocked", "restricted", "geo", "unavailable in your country")
 
@@ -129,16 +129,32 @@ def resolve_slug(slug, outcome, timeout):
         fail("not-found", "market '%s' has no clobTokenIds (not CLOB-tradable)" % slug,
              "check enableOrderBook on the Gamma market")
     tokens = parse_encoded_array(raw_tokens, "clobTokenIds", slug)
-    idx = 0 if outcome == "yes" else 1  # index 0 = Yes token, index 1 = No token (polymarket-api.md)
-    if idx >= len(tokens):
-        fail("schema", "market '%s' has %d clobTokenIds; no index %d for outcome '%s'"
-             % (slug, len(tokens), idx, outcome), "")
     labels = []
     if market.get("outcomes"):
         try:
             labels = parse_encoded_array(market["outcomes"], "outcomes", slug)
         except SystemExit:
             raise
+    # Match the token by OUTCOME LABEL, not by array position: Polymarket does not
+    # guarantee outcomes are ordered [Yes, No] (py-clob-client #276), so trusting
+    # index 0=Yes silently returns the wrong side on markets stored [No, Yes].
+    # clobTokenIds[i] corresponds to outcomes[i]. Fall back to position only when
+    # labels are absent (default binary convention: index 0=Yes, 1=No).
+    idx = None
+    if labels:
+        for i, name in enumerate(labels):
+            if isinstance(name, str) and name.strip().lower() == outcome:
+                idx = i
+                break
+        if idx is None:
+            fail("not-found", "market '%s' has no '%s' outcome; outcomes are %s"
+                 % (slug, outcome, labels),
+                 "use --outcome matching one of the listed labels, or pass --token-id")
+    else:
+        idx = 0 if outcome == "yes" else 1  # no labels: fall back to documented binary order
+    if idx >= len(tokens):
+        fail("schema", "market '%s' has %d clobTokenIds; no index %d for outcome '%s'"
+             % (slug, len(tokens), idx, outcome), "")
     meta = {
         "slug": slug,
         "question": market.get("question"),

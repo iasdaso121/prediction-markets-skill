@@ -7,17 +7,17 @@ build step — the skill is a folder of markdown + Python-stdlib scripts.
 ## Claude Code (plugin, preferred)
 
 ```bash
-claude plugin marketplace add iasdaso121/prediction-markets-skill
+claude plugin marketplace add azazelitto21/prediction-markets-skill
 claude plugin install prediction-markets
 ```
 
-Or from an interactive session: `/plugin marketplace add iasdaso121/prediction-markets-skill`
+Or from an interactive session: `/plugin marketplace add azazelitto21/prediction-markets-skill`
 then `/plugin install prediction-markets`.
 
 ## Any SKILL.md-compatible agent (Claude Code, Codex, Cursor, etc.)
 
 ```bash
-git clone --depth 1 https://github.com/iasdaso121/prediction-markets-skill /tmp/pms
+git clone --depth 1 https://github.com/azazelitto21/prediction-markets-skill /tmp/pms
 mkdir -p ~/.claude/skills
 cp -r /tmp/pms/skills/prediction-markets ~/.claude/skills/
 rm -rf /tmp/pms
@@ -29,7 +29,7 @@ For non-Claude agents replace `~/.claude/skills/` with your skills directory
 ## skills CLI
 
 ```bash
-npx skills add iasdaso121/prediction-markets-skill
+npx skills add azazelitto21/prediction-markets-skill
 ```
 
 ## Verify the install

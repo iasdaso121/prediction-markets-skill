@@ -20,7 +20,7 @@ import urllib.request
 
 GAMMA = "https://gamma-api.polymarket.com"
 CLOB = "https://clob.polymarket.com"
-USER_AGENT = "prediction-markets-skill/0.1 (+https://github.com/iasdaso121/prediction-markets-skill)"
+USER_AGENT = "prediction-markets-skill/0.1 (+https://github.com/azazelitto21/prediction-markets-skill)"
 EXIT_CODES = {"usage": 2, "network": 3, "rate-limit": 4, "geo": 5, "not-found": 6, "schema": 7}
 GEO_WORDS = ("cloudflare", "region", "blocked", "restricted", "geo", "unavailable in your country")
 

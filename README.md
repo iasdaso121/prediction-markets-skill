@@ -5,7 +5,6 @@
 ![Dependencies](https://img.shields.io/badge/dependencies-stdlib--only-success.svg)
 ![Zero Deps](https://img.shields.io/badge/zero--deps-true-success.svg)
 ![Scope](https://img.shields.io/badge/scope-read--only-green.svg)
-![Trigger Accuracy](https://img.shields.io/badge/trigger_accuracy-50%25-orange.svg)
 
 **Scope: read-only market data only. No trading, no API keys, no wallet access — ever, in this skill.**
 
@@ -21,7 +20,7 @@ A zero-dependency skill for Claude Code / Codex / Cursor that gives AI agents ac
 
 ## Status
 
-v0.1.0 — Active development. See CHANGELOG.md.
+v0.1.1 — Active development. See CHANGELOG.md.
 
 ## Install
 

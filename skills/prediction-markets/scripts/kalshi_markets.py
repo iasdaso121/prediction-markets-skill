@@ -23,7 +23,7 @@ BASE_URL = "https://external-api.kalshi.com/trade-api/v2"
 # Secondary documented production host (references/kalshi-api.md "Base URLs");
 # used ONLY to disambiguate wordless 403s -- see classify_deny().
 ALT_URL = "https://api.elections.kalshi.com/trade-api/v2"
-USER_AGENT = "prediction-markets-skill/0.1 (+https://github.com/iasdaso121/prediction-markets-skill)"
+USER_AGENT = "prediction-markets-skill/0.1 (+https://github.com/azazelitto21/prediction-markets-skill)"
 # Status QUERY enum from spec (MarketStatusQuery). Spec wins over prose, which omits "paused".
 STATUS_CHOICES = ("unopened", "open", "paused", "closed", "settled")
 PAGE_MAX = 1000  # GET /markets `limit`: 0-1000, default 100 (MarketLimitQuery)
